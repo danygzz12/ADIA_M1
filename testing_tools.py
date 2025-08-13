@@ -44,4 +44,4 @@ def grade_code(func, max_score=5):
 
     score = passed_tests/total_tests*max_score
     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
-    return feedback, score
+    return feedback
