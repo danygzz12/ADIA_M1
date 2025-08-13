@@ -20,7 +20,7 @@ def failed_case_message(expected_output, real_output, func_name, arg, arg_name=T
 
 
 def grade_code(func, max_score=5):
-    import pickle as pkl 
+    import pickle 
 
     with open("ADIA_M1/tests_" + func.__name__, "rb") as f:
         test_cases = pickle.load(f)
