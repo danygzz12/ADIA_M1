@@ -126,12 +126,12 @@ def simulate_interaction(input_values, function, args={}):
 def grade_interactive_function(func):
     ### Get the inputs
     import pickle 
-    with open("tests_" + func.__name__, "rb") as file:
+    with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
         input_func = pickle.load(file)
     test_inputs, args, max_score = input_func()
 
     ### Get the solution function
-    with open(func.__name__, "rb") as file:
+    with open("ADIA_M1/" + func.__name__, "rb") as file:
         sol_func = pickle.load(file)
 
     failed_messages = ""
