@@ -16,7 +16,7 @@ def failed_case_message(expected_output, real_output, func_name, arg, arg_name=T
     else:
         arg_text = [str(value) for value in arg.values()]
     arg_text = ", ".join(arg_text)
-    return f"\nCalling {func_name}({arg_text}) returned: \n{real_output}. \nExpected: \n{expected_output} \n"
+    return f"\nCalling {func_name}({arg_text}) returned: \n{real_output} \nExpected: \n{expected_output} \n"
 
 
 def grade_code(func, max_score=5):
