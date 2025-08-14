@@ -167,7 +167,7 @@ def grade_interactive_function(func):
     temp_namespace = {}
 
     # Execute the code in this namespace
-    exec(func_source, temp_namespace)
+    exec(input_code, temp_namespace)
     
     # Extract the function object (whatever its original name was)
     # Find the first callable in the namespace that isn't built-in
@@ -183,7 +183,23 @@ def grade_interactive_function(func):
 
     ### Get the solution function
     with open("ADIA_M1/" + func.__name__, "rb") as file:
-        sol_func = pickle.load(file)
+        sol_code = pickle.load(file)
+
+    # Create a temporary namespace (dictionary) to hold executed code
+    temp_namespace = {}
+
+    # Execute the code in this namespace
+    exec(sol_code, temp_namespace)
+    
+    # Extract the function object (whatever its original name was)
+    # Find the first callable in the namespace that isn't built-in
+    loaded_func = next(
+        obj for obj in temp_namespace.values()
+        if callable(obj) and obj.__name__ != "<lambda>"
+    )
+    
+    # Assign to your fixed variable name
+    sol_func = loaded_func
 
     failed_messages = ""
 
