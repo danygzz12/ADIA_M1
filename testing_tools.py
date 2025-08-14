@@ -123,11 +123,62 @@ def simulate_interaction(input_values, function, args={}):
             pass
     return patched_input
 
+# def grade_interactive_function(func):
+#     ### Get the inputs
+#     import pickle 
+#     with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+#         input_func = pickle.load(file)
+#     test_inputs, args, max_score = input_func()
+
+#     ### Get the solution function
+#     with open("ADIA_M1/" + func.__name__, "rb") as file:
+#         sol_func = pickle.load(file)
+
+#     failed_messages = ""
+
+#     passed_tests = 0
+#     total_tests = 0
+
+#     for input_values, arg in zip(test_inputs, args):
+#         total_tests += 1
+#         ### Run the simulation to obtain expected values. 
+#         exp_pi = simulate_interaction(input_values.copy(), sol_func, arg)
+#         real_pi = simulate_interaction(input_values.copy(), func, arg)
+
+#         exp_interaction = "\n".join(exp_pi.captured_lines)
+#         real_interaction = "\n".join(real_pi.captured_lines)
+
+#         if exp_interaction != real_interaction:
+#             failed_messages += failed_case_message(exp_interaction, real_interaction, func.__name__, arg)
+#         else:
+#             passed_tests += 1
+
+#     score = passed_tests/total_tests*max_score 
+#     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
+#     return feedback
+
 def grade_interactive_function(func):
     ### Get the inputs
     import pickle 
     with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
-        input_func = pickle.load(file)
+        input_code = pickle.load(file)
+
+    # Create a temporary namespace (dictionary) to hold executed code
+    temp_namespace = {}
+
+    # Execute the code in this namespace
+    exec(func_source, temp_namespace)
+    
+    # Extract the function object (whatever its original name was)
+    # Find the first callable in the namespace that isn't built-in
+    loaded_func = next(
+        obj for obj in temp_namespace.values()
+        if callable(obj) and obj.__name__ != "<lambda>"
+    )
+    
+    # Assign to your fixed variable name
+    input_func = loaded_func
+    
     test_inputs, args, max_score = input_func()
 
     ### Get the solution function
@@ -156,4 +207,6 @@ def grade_interactive_function(func):
     score = passed_tests/total_tests*max_score 
     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
     return feedback
+
+
 
