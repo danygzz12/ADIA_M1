@@ -9,6 +9,8 @@ def compare_returns(expected_output, real_output):
         ### compare numbers with a tolerance level
         from math import isclose
         return isclose(expected_output, real_output, rel_tol=1e-6, abs_tol=1e-6)
+    if isinstance(expected_output, str):
+        return expected_output == real_output
     
 def failed_case_message(expected_output, real_output, func_name, arg, arg_name=True):
     if arg_name:
@@ -19,20 +21,29 @@ def failed_case_message(expected_output, real_output, func_name, arg, arg_name=T
     return f"\nCalling {func_name}({arg_text}) returned: \n{real_output} \nExpected: \n{expected_output} \n"
 
 
-def grade_code(func, max_score=5):
+def grade_code(func):
     import pickle 
+    try: 
+        with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+            tests = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
+    input_args = tests[1]
+    max_score = tests[2]
 
-    with open("ADIA_M1/tests_" + func.__name__, "rb") as f:
-        test_cases = pickle.load(f)
-
+    try: 
+        with open("ADIA_M1/" + func.__name__, "rb") as file:
+            expected_results = pickle.load(file)
+    except FileNotFoundError:
+        return "Function name not valid. Grading failed. "
+    
     passed_tests = 0
     total_tests = 0
     failed_messages = ""
 
-    for case in test_cases: 
+    for arg, expected_output in zip(input_args, expected_results): 
         total_tests += 1
-        real_output = func(**case[0])
-        expected_output = case[1]
+        real_output = func(**arg)
 
         passed = compare_returns(expected_output, real_output)
 
@@ -40,11 +51,41 @@ def grade_code(func, max_score=5):
             passed_tests +=1 
             continue 
 
-        failed_messages += failed_case_message(expected_output, real_output, func.__name__, case[0])
+        failed_messages += failed_case_message(expected_output, real_output, func.__name__, arg)
 
     score = passed_tests/total_tests*max_score
     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
     return feedback
+# def grade_code(func, max_score=5):
+#     import pickle 
+
+#     with open("ADIA_M1/tests_" + func.__name__, "rb") as f:
+#         test_cases = pickle.load(f)
+
+#     passed_tests = 0
+#     total_tests = 0
+#     failed_messages = ""
+
+#     for case in test_cases: 
+#         total_tests += 1
+#         real_output = func(**case[0])
+#         expected_output = case[1]
+
+#         passed = compare_returns(expected_output, real_output)
+
+#         if passed:
+#             passed_tests +=1 
+#             continue 
+
+#         failed_messages += failed_case_message(expected_output, real_output, func.__name__, case[0])
+
+#     score = passed_tests/total_tests*max_score
+#     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
+#     return feedback
+
+
+
+
 
 
 
@@ -157,62 +198,96 @@ def simulate_interaction(input_values, function, args={}):
 #     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
 #     return feedback
 
+# def grade_interactive_function_old(func):
+#     ### Get the inputs
+#     import pickle 
+#     with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+#         input_code = pickle.load(file)
+
+#     # Create a temporary namespace (dictionary) to hold executed code
+#     temp_namespace = {}
+
+#     # Execute the code in this namespace
+#     exec(input_code, temp_namespace)
+    
+#     # Extract the function object (whatever its original name was)
+#     # Find the first callable in the namespace that isn't built-in
+#     loaded_func = next(
+#         obj for obj in temp_namespace.values()
+#         if callable(obj) and obj.__name__ != "<lambda>"
+#     )
+    
+#     # Assign to your fixed variable name
+#     input_func = loaded_func
+    
+#     test_inputs, args, max_score = input_func()
+
+#     ### Get the solution function
+#     with open("ADIA_M1/" + func.__name__, "rb") as file:
+#         sol_code = pickle.load(file)
+
+#     # Create a temporary namespace (dictionary) to hold executed code
+#     temp_namespace = {}
+
+#     # Execute the code in this namespace
+#     exec(sol_code, temp_namespace)
+    
+#     # Extract the function object (whatever its original name was)
+#     # Find the first callable in the namespace that isn't built-in
+#     loaded_func = next(
+#         obj for obj in temp_namespace.values()
+#         if callable(obj) and obj.__name__ != "<lambda>"
+#     )
+    
+#     # Assign to your fixed variable name
+#     sol_func = loaded_func
+
+#     failed_messages = ""
+
+#     passed_tests = 0
+#     total_tests = 0
+
+#     for input_values, arg in zip(test_inputs, args):
+#         total_tests += 1
+#         ### Run the simulation to obtain expected values. 
+#         exp_pi = simulate_interaction(input_values.copy(), sol_func, arg)
+#         real_pi = simulate_interaction(input_values.copy(), func, arg)
+
+#         exp_interaction = "\n".join(exp_pi.captured_lines)
+#         real_interaction = "\n".join(real_pi.captured_lines)
+
+#         if exp_interaction != real_interaction:
+#             failed_messages += failed_case_message(exp_interaction, real_interaction, func.__name__, arg)
+#         else:
+#             passed_tests += 1
+
+#     score = passed_tests/total_tests*max_score 
+#     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
+#     return feedback
+
 def grade_interactive_function(func):
-    ### Get the inputs
     import pickle 
-    with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
-        input_code = pickle.load(file)
+    try:
+        with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+            test_inputs, args, max_score = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
 
-    # Create a temporary namespace (dictionary) to hold executed code
-    temp_namespace = {}
-
-    # Execute the code in this namespace
-    exec(input_code, temp_namespace)
+    try: 
+        with open("ADIA_M1/" + func.__name__, "rb") as file:
+            exp_interactions = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
     
-    # Extract the function object (whatever its original name was)
-    # Find the first callable in the namespace that isn't built-in
-    loaded_func = next(
-        obj for obj in temp_namespace.values()
-        if callable(obj) and obj.__name__ != "<lambda>"
-    )
-    
-    # Assign to your fixed variable name
-    input_func = loaded_func
-    
-    test_inputs, args, max_score = input_func()
-
-    ### Get the solution function
-    with open("ADIA_M1/" + func.__name__, "rb") as file:
-        sol_code = pickle.load(file)
-
-    # Create a temporary namespace (dictionary) to hold executed code
-    temp_namespace = {}
-
-    # Execute the code in this namespace
-    exec(sol_code, temp_namespace)
-    
-    # Extract the function object (whatever its original name was)
-    # Find the first callable in the namespace that isn't built-in
-    loaded_func = next(
-        obj for obj in temp_namespace.values()
-        if callable(obj) and obj.__name__ != "<lambda>"
-    )
-    
-    # Assign to your fixed variable name
-    sol_func = loaded_func
-
     failed_messages = ""
 
     passed_tests = 0
     total_tests = 0
 
-    for input_values, arg in zip(test_inputs, args):
+    for input_values, arg, exp_interaction in zip(test_inputs, args, exp_interactions):
         total_tests += 1
         ### Run the simulation to obtain expected values. 
-        exp_pi = simulate_interaction(input_values.copy(), sol_func, arg)
         real_pi = simulate_interaction(input_values.copy(), func, arg)
-
-        exp_interaction = "\n".join(exp_pi.captured_lines)
         real_interaction = "\n".join(real_pi.captured_lines)
 
         if exp_interaction != real_interaction:
@@ -223,6 +298,4 @@ def grade_interactive_function(func):
     score = passed_tests/total_tests*max_score 
     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
     return feedback
-
-
 
