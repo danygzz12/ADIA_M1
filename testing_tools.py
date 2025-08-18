@@ -10,7 +10,7 @@ def compare_returns(expected_output, real_output):
         from math import isclose
         return isclose(expected_output, real_output, rel_tol=1e-6, abs_tol=1e-6)
     if isinstance(expected_output, int) or isinstance(real_output, int):
-        return expected_output == real_output
+        return int(expected_output) == real_output
     if isinstance(expected_output, str):
         return expected_output == real_output
     
