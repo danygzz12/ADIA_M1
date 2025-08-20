@@ -13,7 +13,7 @@ def compare_returns(expected_output, real_output):
         return expected_output == real_output
     if isinstance(expected_output, str):
         return expected_output == real_output
-        if isinstance(expected_output, dict):
+    if isinstance(expected_output, dict):
         ### compare the keys: 
         for key in expected_output:
             if key not in real_output:
