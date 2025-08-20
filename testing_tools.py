@@ -61,7 +61,7 @@ def grade_code_and_func(func):
 
     ### check if the function uses too many comparisons: 
     if count_comparisons(func) > max_comparisons: 
-        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, you should have no more than {max_comparisons}"
+        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, \n your function should have no more than {max_comparisons} comparison statements"
 
     try: 
         with open("ADIA_M1/" + func.__name__, "rb") as file:
@@ -343,7 +343,7 @@ def grade_interactive_function_and_code(func):
 
     ### check that the function doesn't have too many comparisons: 
     if count_comparisons(func) > max_comparisons: 
-        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, \nyou should have no more than {max_comparisons}"
+        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, \n your function should have no more than {max_comparisons} comparison statements"
 
     try: 
         with open("ADIA_M1/" + func.__name__, "rb") as file:
