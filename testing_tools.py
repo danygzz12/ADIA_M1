@@ -13,6 +13,18 @@ def compare_returns(expected_output, real_output):
         return expected_output == real_output
     if isinstance(expected_output, str):
         return expected_output == real_output
+        if isinstance(expected_output, dict):
+        ### compare the keys: 
+        for key in expected_output:
+            if key not in real_output:
+                return False
+        for key in real_output:
+            if key not in expected_output:
+                return False 
+        for key in expected_output:
+            if expected_output[key] != real_output[key]:
+                return False
+        return True
     
 def failed_case_message(expected_output, real_output, func_name, arg, arg_name=True):
     if arg_name:
