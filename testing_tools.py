@@ -34,6 +34,61 @@ def failed_case_message(expected_output, real_output, func_name, arg, arg_name=T
     arg_text = ", ".join(arg_text)
     return f"\nCalling {func_name}({arg_text}) returned: \n{real_output} \nExpected: \n{expected_output} \n"
 
+def count_comparisons(func):
+    import ast
+    import inspect
+    tree = ast.parse(inspect.getsource(func))
+    boolean_count = sum([1 for node in ast.walk(tree) if isinstance(node, ast.Compare)])
+    return boolean_count
+
+# def check_comparisons(func_name, ):
+#     func = global_vars[func_name]
+#     max_comparisons = 2
+#     comparisons = count_comparisons(func)
+#     assert comparisons <= max_comparisons, "Tu función usa más de 2 comparaciones."
+
+def grade_code_and_func(func):
+    import pickle 
+    import pickle 
+    try: 
+        with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+            tests = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
+    input_args = tests[1]
+    max_score = tests[2]
+    max_comparisons = tests[3]
+
+    ### check if the function uses too many comparisons: 
+    if count_comparisons(func) > max_comparisons: 
+        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, you should have no more than {max_comparisons}"
+
+    try: 
+        with open("ADIA_M1/" + func.__name__, "rb") as file:
+            expected_results = pickle.load(file)
+    except FileNotFoundError:
+        return "Function name not valid. Grading failed. "
+    
+    passed_tests = 0
+    total_tests = 0
+    failed_messages = ""
+
+    for arg, expected_output in zip(input_args, expected_results): 
+        total_tests += 1
+        real_output = func(**arg)
+
+        passed = compare_returns(expected_output, real_output)
+
+        if passed:
+            passed_tests +=1 
+            continue 
+
+        failed_messages += failed_case_message(expected_output, real_output, func.__name__, arg)
+
+    score = passed_tests/total_tests*max_score
+    feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
+    return feedback
+
 
 def grade_code(func):
     import pickle 
