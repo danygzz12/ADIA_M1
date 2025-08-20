@@ -333,6 +333,44 @@ def simulate_interaction(input_values, function, args={}):
 #     score = passed_tests/total_tests*max_score 
 #     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
 #     return feedback
+def grade_interactive_function_and_code(func):
+    import pickle 
+    try:
+        with open("ADIA_M1/tests_" + func.__name__, "rb") as file:
+            test_inputs, args, max_score, max_comparisons = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
+
+    ### check that the function doesn't have too many comparisons: 
+    if count_comparisons(func) > max_comparisons: 
+        return f"Score: 0 \nYour function has too many comparison statements. If you actually use a dictionary, \nyou should have no more than {max_comparisons}"
+
+    try: 
+        with open("ADIA_M1/" + func.__name__, "rb") as file:
+            exp_interactions = pickle.load(file)
+    except FileNotFoundError:
+        return "The function name is not valid. Grading failed. "
+    
+    failed_messages = ""
+
+    passed_tests = 0
+    total_tests = 0
+
+    for input_values, arg, exp_interaction in zip(test_inputs, args, exp_interactions):
+        total_tests += 1
+        ### Run the simulation to obtain expected values. 
+        real_pi = simulate_interaction(input_values.copy(), func, arg)
+        real_interaction = "\n".join(real_pi.captured_lines)
+
+        if exp_interaction != real_interaction:
+            failed_messages += failed_case_message(exp_interaction, real_interaction, func.__name__, arg)
+        else:
+            passed_tests += 1
+
+    score = passed_tests/total_tests*max_score 
+    feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
+    return feedback
+    
 
 def grade_interactive_function(func):
     import pickle 
