@@ -25,7 +25,13 @@ def compare_returns(expected_output, real_output):
             if expected_output[key] != real_output[key]:
                 return False
         return True
-    
+    if isinstance(expected_output, tuple): 
+        return expected_output == real_output
+    if isinstance(expected_output, list):
+        return expected_output == real_output
+
+
+
 def failed_case_message(expected_output, real_output, func_name, arg, arg_name=True):
     if arg_name:
         arg_text = [str(key)+"="+str(value) for key, value in arg.items()]
