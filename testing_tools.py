@@ -29,6 +29,7 @@ def compare_returns(expected_output, real_output):
         return expected_output == real_output
     if isinstance(expected_output, list):
         return expected_output == real_output
+    return expected_output == real_output
 
 
 
