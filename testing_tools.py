@@ -653,7 +653,7 @@ def test_keep_behavior(test_class):
 def test_inintialization_2(test_class):
     ### Check that the object can be initialized: 
     try: 
-        instance = test_class()
+        instance = test_class(p_switch=0.5)
     except:
         return f"{test_class.__name__}() cannot be initialized. Check your class definition. ", False
     
@@ -676,7 +676,7 @@ def test_inintialization_2(test_class):
         random.seed(s)
         selection = random.choice([1, 2, 3])
         random.seed(s)
-        instance = test_class()
+        instance = test_class(p_switch=0.5)
         if instance.chosen_door != selection: 
             return f"Error. The chosen_door attribute should be set with random.choice([1, 2, 3]).", False 
     return "", True
