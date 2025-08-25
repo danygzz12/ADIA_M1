@@ -690,15 +690,14 @@ def test_rswitch_behavior(test_class, num_tests=100):
     p_values = [i*0.01 for i in range(10, 101, 10)]
 
     seeds = [random.random()*43243718954 for i in range(num_tests)]
-
-    switched = 0
-    switched_worked = 0
-    stayed = 0
-    stayed_worked = 0
     feedback = ""
     correct = True
 
     for p in p_values: 
+        switched = 0
+        switched_worked = 0
+        stayed = 0
+        stayed_worked = 0
         for s in seeds:
             test_player = test_class(p_switch=p)
             initial_selection = test_player.chosen_door
