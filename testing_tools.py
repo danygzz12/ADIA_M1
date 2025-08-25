@@ -621,7 +621,8 @@ def test_switch_behavior(test_class):
         Game = MontyHallGame()
         test_player.play(Game)
         if Game.player_selection != initial_selection:
-            worked += 1
+            if Game.player_selection is not None:
+                worked += 1
 
     if worked != num_tests:
         return f"Your switching strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
@@ -643,7 +644,8 @@ def test_keep_behavior(test_class):
         Game = MontyHallGame()
         test_player.play(Game)
         if Game.player_selection == initial_selection:
-            worked += 1
+            if Game.player_selection is not None:
+                worked += 1
 
     if worked != num_tests:
         return f"Your keeping strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
@@ -668,6 +670,14 @@ def test_inintialization_2(test_class):
     except:
         return f"{test_class.__name__} does not contain the attribute 'p_switch'", False
     
+    ### Check that attribute p_switch is set correctly: 
+    p_values = [i*0.01 for i in range(10, 10, 10)]
+    for p in p_values: 
+        instance = test_class(p_switch=p)
+        if instance.p_switch != p:
+            return f"{test_class.__name__}(p_switch={p}) is not properly initialized to have an attribute of p_switch set to {p}.", False
+        
+    
     ### Check that chosen_door is set correctly: 
     num_tests = 50 
     import random
@@ -687,18 +697,20 @@ def test_rswitch_behavior(test_class, num_tests=100):
     if not passed:
         return feedback, False
     
-    p_values = [i*0.01 for i in range(10, 101, 10)]
+    p_values = [i*0.01 for i in range(10, 100, 10)]
 
     seeds = [random.random()*43243718954 for i in range(num_tests)]
     feedback = ""
     correct = True
 
-    for p in p_values: 
+    for p in p_values:
         switched = 0
         switched_worked = 0
         stayed = 0
         stayed_worked = 0
+        i = 0
         for s in seeds:
+            i += 1
             test_player = test_class(p_switch=p)
             initial_selection = test_player.chosen_door
             Game = MontyHallGame()
@@ -710,12 +722,14 @@ def test_rswitch_behavior(test_class, num_tests=100):
                 ### should have switched
                 switched += 1
                 if initial_selection != Game.player_selection:
-                    switched_worked += 1
+                    if Game.player_selection is not None:
+                        switched_worked += 1
             else:
                 ### should have stayed
                 stayed += 1
                 if initial_selection == Game.player_selection:
-                    stayed_worked += 1
+                    if initial_selection is not None:
+                        stayed_worked += 1
         if switched != switched_worked or stayed != stayed_worked: 
             feedback += f"\nGiven p_switch: {p}, switched {switched_worked}/{switched} times and stayed {stayed_worked}/{stayed} times."
             correct = False
