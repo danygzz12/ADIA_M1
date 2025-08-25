@@ -610,7 +610,7 @@ def test_switch_behavior(test_class):
     feedback, passed = test_inintialization(test_class)
 
     if not passed: 
-        return feedback
+        return feedback, False
     
     num_tests = 100 
     worked = 0 
@@ -626,13 +626,13 @@ def test_switch_behavior(test_class):
     if worked != num_tests:
         return f"Your switching strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
     else: 
-        return "", True
+        return "Congrats! Your swtich strategy works as expected.", True
     
 def test_keep_behavior(test_class):
     feedback, passed = test_inintialization(test_class)
 
     if not passed: 
-        return feedback
+        return feedback, False
     
     num_tests = 100 
     worked = 0 
@@ -648,7 +648,7 @@ def test_keep_behavior(test_class):
     if worked != num_tests:
         return f"Your keeping strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
     else: 
-        return "", True
+        return "Congrats! Your keep strategy works as expected.", True
     
 def test_inintialization_2(test_class):
     ### Check that the object can be initialized: 
@@ -685,7 +685,7 @@ def test_rswitch_behavior(test_class, num_tests=100):
     feedback, passed = test_inintialization_2(test_class)
 
     if not passed:
-        return feedback
+        return feedback, False
     
     p_values = [i*0.01 for i in range(10, 101, 10)]
 
@@ -722,7 +722,7 @@ def test_rswitch_behavior(test_class, num_tests=100):
             correct = False
 
     if correct: 
-        return "Random switch behavior works as expected", True 
+        return "Random switch behavior works as expected", True
     else: 
         return "Your random switching strategy is off. It should switch if random.random() < self.p_switch\n" + feedback, False
 
