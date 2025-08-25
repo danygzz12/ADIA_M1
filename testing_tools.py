@@ -577,7 +577,41 @@ class MontyHallGame:
         else:
             return False
 
+def test_inintialization(test_class):
+    ### Check that the object can be initialized: 
+    try: 
+        instance = test_class()
+    except:
+        return f"{test_class.__name__}() cannot be initialized. Check your class definition. ", False
+    
+    ### Check that it contains the right attributes: 
+    try: 
+        instance.chosen_door 
+    except: 
+        return f"{test_class.__name__} does not contain the attribute 'chosen_door'.", False
+    
+    ### Check that chosen_door is set correctly: 
+    num_tests = 50 
+    import random
+    seeds = [random.random() for i in range(num_tests)]
+    for s in seeds: 
+        random.seed(s)
+        selection = random.choice([1, 2, 3])
+        random.seed(s)
+        instance = test_class()
+        if instance.chosen_door != selection: 
+            return f"Error. The chosen_door attribute should be set with random.choice([1, 2, 3]).", False 
+    return "", True
+
+
+
+
 def test_switch_behavior(test_class): 
+    feedback, passed = test_inintialization(test_class)
+
+    if not passed: 
+        return feedback
+    
     num_tests = 100 
     worked = 0 
 
@@ -595,6 +629,11 @@ def test_switch_behavior(test_class):
         return "", True
     
 def test_keep_behavior(test_class):
+    feedback, passed = test_inintialization(test_class)
+
+    if not passed: 
+        return feedback
+    
     num_tests = 100 
     worked = 0 
 
@@ -611,8 +650,43 @@ def test_keep_behavior(test_class):
     else: 
         return "", True
     
+def test_inintialization_2(test_class):
+    ### Check that the object can be initialized: 
+    try: 
+        instance = test_class()
+    except:
+        return f"{test_class.__name__}() cannot be initialized. Check your class definition. ", False
+    
+    ### Check that it contains the right attributes: 
+    try: 
+        instance.chosen_door 
+    except: 
+        return f"{test_class.__name__} does not contain the attribute 'chosen_door'.", False
+    
+    try: 
+        instance.p_switch
+    except:
+        return f"{test_class.__name__} does not contain the attribute 'p_switch'", False
+    
+    ### Check that chosen_door is set correctly: 
+    num_tests = 50 
+    import random
+    seeds = [random.random() for i in range(num_tests)]
+    for s in seeds: 
+        random.seed(s)
+        selection = random.choice([1, 2, 3])
+        random.seed(s)
+        instance = test_class()
+        if instance.chosen_door != selection: 
+            return f"Error. The chosen_door attribute should be set with random.choice([1, 2, 3]).", False 
+    return "", True
 
 def test_rswitch_behavior(test_class, num_tests=100):
+    feedback, passed = test_inintialization_2(test_class)
+
+    if not passed:
+        return feedback
+    
     p_values = [i*0.01 for i in range(10, 101, 10)]
 
     seeds = [random.random()*43243718954 for i in range(num_tests)]
