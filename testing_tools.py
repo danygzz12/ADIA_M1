@@ -524,21 +524,21 @@ def test_class(test_class):
         with open("ADIA_M1/tests_"+test_class.__name__, "rb") as file: 
             input_args, expected_args, expected_results = pickle.load(file)
     except:
-        return "Invalid function name. Make sure your auto-grader is updated."
+        return "Invalid function name. Make sure your auto-grader is updated.", False
 
     ### test that the class can be initialized and contains all the right attribute values after initialization
     fb, passed = test_attributes(test_class, input_args, expected_args)
 
     if not passed: 
-        return fb 
+        return fb, False
     
     ### test that the methods in the class work correctly: 
     feedback, passed = test_methods(test_class, input_args, expected_results)
 
     if not passed:
-        return feedback 
+        return feedback, False
     
-    return "Congrats! Everything works perfectly."
+    return "Congrats! Everything works perfectly.", True
 
 import random 
 
