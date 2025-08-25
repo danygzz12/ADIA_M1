@@ -539,3 +539,116 @@ def test_class(test_class):
         return feedback 
     
     return "Congrats! Everything works perfectly."
+
+import random 
+
+class MontyHallGame:
+    def __init__(self):
+        ### choose a door to have a car, and the rest have goats. 
+        self.goat_doors = random.sample([1, 2, 3], k=2)
+        self.car_door = [x for x in [1, 2, 3] if x not in self.goat_doors][0]
+        self.player_selection = None
+        self.revealed_goat_door = None
+
+    def set_player_choice(self, choice):
+        if choice in [1, 2, 3]:
+            if choice == self.revealed_goat_door: 
+                print("You shouldn't select the door that's been opened and contains a goat! Try again")
+                return
+            self.player_selection = choice
+        else:
+            print("Invalid selection. You must choose 1, 2 or 3.")
+
+    def reveal_goat(self):
+        if not self.player_selection: 
+            raise AssertionError("The player selection has not been made yet. Cannot reveal a goat. ")
+        elif self.revealed_goat_door is not None:
+            return self.revealed_goat_door
+        else:
+            ### Ensure you reveal a door with a goat if the player did NOT choose it. 
+            revealed_goats = [door for door in self.goat_doors if door != self.player_selection]
+            goat_door = random.choice(revealed_goats)
+            self.revealed_goat_door = goat_door
+            return goat_door
+        
+    def check_winner(self):
+        if self.player_selection == self.car_door:
+            return True 
+        else:
+            return False
+
+def test_switch_behavior(test_class): 
+    num_tests = 100 
+    worked = 0 
+
+    for s in range(num_tests):
+        test_player = test_class()
+        initial_selection = test_player.chosen_door 
+        Game = MontyHallGame()
+        test_player.play(Game)
+        if Game.player_selection != initial_selection:
+            worked += 1
+
+    if worked != num_tests:
+        return f"Your switching strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
+    else: 
+        return "", True
+    
+def test_keep_behavior(test_class):
+    num_tests = 100 
+    worked = 0 
+
+    for s in range(num_tests):
+        test_player = test_class()
+        initial_selection = test_player.chosen_door 
+        Game = MontyHallGame()
+        test_player.play(Game)
+        if Game.player_selection == initial_selection:
+            worked += 1
+
+    if worked != num_tests:
+        return f"Your keeping strategy is not implemented correctly. Switched {worked}/{num_tests} times.", False
+    else: 
+        return "", True
+    
+
+def test_rswitch_behavior(test_class, num_tests=100):
+    p_values = [i*0.01 for i in range(10, 101, 10)]
+
+    seeds = [random.random()*43243718954 for i in range(num_tests)]
+
+    switched = 0
+    switched_worked = 0
+    stayed = 0
+    stayed_worked = 0
+    feedback = ""
+    correct = True
+
+    for p in p_values: 
+        for s in seeds:
+            test_player = test_class(p_switch=p)
+            initial_selection = test_player.chosen_door
+            Game = MontyHallGame()
+            random.seed(s)
+            test_player.play(Game)
+            random.seed(s)
+            p_val = random.random()
+            if p_val < p: 
+                ### should have switched
+                switched += 1
+                if initial_selection != Game.player_selection:
+                    switched_worked += 1
+            else:
+                ### should have stayed
+                stayed += 1
+                if initial_selection == Game.player_selection:
+                    stayed_worked += 1
+        if switched != switched_worked or stayed != stayed_worked: 
+            feedback += f"\nGiven p_switch: {p}, switched {switched_worked}/{switched} times and stayed {stayed_worked}/{stayed} times."
+            correct = False
+
+    if correct: 
+        return "Random switch behavior works as expected", True 
+    else: 
+        return "Your random switching strategy is off. It should switch if random.random() < self.p_switch\n" + feedback, False
+
