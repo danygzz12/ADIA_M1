@@ -450,3 +450,92 @@ def grade_interactive_function_with_randomization(func):
     feedback = f"Passed {passed_tests}/{total_tests}.\nScore: {score}"+failed_messages
     return feedback
 
+
+def test_attributes(test_class, input_args, expected_args):
+    feedback = ""
+    passed = True
+    for args, expected in zip(input_args, expected_args):
+        arg_text = [str(key)+"="+str(value) for key, value in args.items()]
+        arg_text = ", ".join(arg_text)
+        ### check that the object can be initialized with the given arguments
+        try: 
+            instance = test_class(**args)
+        except TypeError:
+            passed = False
+            feedback += f"\nCalling {test_class.__name__}({arg_text}) could not be initialized. Did you correctly set all attribute names?"
+            continue
+
+        ### Check this specific case of argument initialization
+        passed_case = True
+        case_feedback = f"\nCalling {test_class.__name__}({arg_text}) returned an error in its attributes:"
+
+        ### check that they contain all attributes after initialization: 
+        for arg in expected:
+            try: 
+                getattr(instance, arg)
+            except AttributeError: 
+                case_feedback += f"\nThe instance does not contain the attribute '{arg}'."
+                passed_case = False
+        
+        if not passed_case: 
+            feedback += case_feedback 
+            continue
+        
+        ### Check that attributes contain the expected values after initialization
+        for arg, value in expected.items():
+            if getattr(instance, arg) != value: 
+                case_feedback += f"\nThe attribute '{arg}' is set to {getattr(instance, arg)} instead of {value}"
+                passed_case = False 
+                passed = False
+        if not passed_case:
+            feedback += case_feedback + "\n"
+
+    return feedback, passed
+
+
+
+def test_methods(test_class, input_args, expected_results):
+    feedback = ""
+    passed = True
+    for args, results in zip(input_args, expected_results):
+        arg_text = [str(key)+"="+str(value) for key, value in args.items()]
+        arg_text = ", ".join(arg_text)
+        instance = test_class(**args)
+        passed_case = True
+        case_feedback = f"\n\nCalling {test_class.__name__}({arg_text}) returned an error in its methods:"
+
+        for method, exp_value in results.items():
+            real_method = getattr(instance, method)
+            real_result = real_method()
+            if real_result != exp_value:
+                passed_case = False 
+                passed = False
+                case_feedback += f"\n{instance.__class__.__name__}.{method}() returned {real_result} instead of {exp_value}"
+        
+        if not passed_case: 
+            feedback += case_feedback
+    return feedback[2:], passed
+
+
+def test_class(test_class):
+    ### Get input_values 
+    try: 
+        import pickle
+        with open("ADIA_M1/tests_"+test_class.__name__, "rb") as file: 
+            input_args, expected_args, expected_results = pickle.load(file)
+    except:
+        return "Invalid function name. Make sure your auto-grader is updated."
+
+    ### test that the class can be initialized and contains all the right attribute values after initialization
+    fb, passed = test_attributes(test_class, input_args, expected_args)
+
+    if not passed: 
+        return fb 
+    
+    ### test that the methods in the class work correctly: 
+    feedback, passed = test_methods(test_class, input_args, expected_results)
+
+    if not passed:
+        return feedback 
+    
+    return "Congrats! Everything works perfectly."
