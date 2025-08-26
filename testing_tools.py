@@ -609,7 +609,7 @@ def test_binary_operations(test_class, tests_binary_operators):
 def test_class_2(test_class):
     try:
         import pickle 
-        with open("test_"+test_class.__name__, "rb") as file:
+        with open("ADIA_M1/tests_"+test_class.__name__, "rb") as file:
             input_args, expected_args, expected_returns, expected_modified_attrs, tests_binary_operators = pickle.load(file)
     except:
         return "Invalid class name. Make sure your auto-grader is updated.", False
