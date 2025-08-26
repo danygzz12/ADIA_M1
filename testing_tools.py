@@ -687,7 +687,7 @@ def test_class_2(test_class):
         print("Initialization is correct.")
     
     ### test that the methods that return something (without modifying the class) are correct:
-    print("Testing methods that return some value...")
+    print("\nTesting methods that return some value...")
     fb, passed = test_methods(test_class, input_args, expected_returns)
 
     if not passed:
@@ -705,7 +705,7 @@ def test_class_2(test_class):
         print("All good.")
 
     ### test the binary operators: 
-    print("Testing implementation of binary operations...")
+    print("\nTesting implementation of binary operations...")
     fb, passed = test_binary_operations(test_class, tests_binary_operators)
     
     if not passed:
