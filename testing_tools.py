@@ -462,12 +462,12 @@ def test_attributes(test_class, input_args, expected_args):
             instance = test_class(**args)
         except TypeError:
             passed = False
-            feedback += f"\nCalling {test_class.__name__}({arg_text}) could not be initialized. Did you correctly set all attribute names?"
+            feedback += f"\n\nCalling {test_class.__name__}({arg_text}) could not be initialized. Did you correctly set all attribute names?"
             continue
 
         ### Check this specific case of argument initialization
         passed_case = True
-        case_feedback = f"\nCalling {test_class.__name__}({arg_text}) returned an error in its attributes:"
+        case_feedback = f"\n\nCalling {test_class.__name__}({arg_text}) returned an error in its attributes:"
 
         ### check that they contain all attributes after initialization: 
         for arg in expected:
@@ -491,7 +491,7 @@ def test_attributes(test_class, input_args, expected_args):
         if not passed_case:
             feedback += case_feedback + "\n"
 
-    return feedback, passed
+    return feedback[2:], passed
 
 
 
