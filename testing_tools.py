@@ -483,7 +483,8 @@ def test_attributes(test_class, input_args, expected_args):
         
         ### Check that attributes contain the expected values after initialization
         for arg, value in expected.items():
-            if getattr(instance, arg) != value: 
+            # if getattr(instance, arg) != value: 
+            if not compare_returns(getattr(instance, arg), value):
                 case_feedback += f"\nThe attribute '{arg}' is set to {getattr(instance, arg)} instead of {value}"
                 passed_case = False 
                 passed = False
