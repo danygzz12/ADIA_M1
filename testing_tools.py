@@ -507,7 +507,8 @@ def test_methods(test_class, input_args, expected_results):
         for method, exp_value in results.items():
             real_method = getattr(instance, method)
             real_result = real_method()
-            if real_result != exp_value:
+            if not compare_returns(real_result, exp_value):
+            # if real_result != exp_value:
                 passed_case = False 
                 passed = False
                 case_feedback += f"\n{instance.__class__.__name__}.{method}() returned {real_result} instead of {exp_value}"
