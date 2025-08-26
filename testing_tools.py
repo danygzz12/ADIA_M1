@@ -592,7 +592,11 @@ def test_binary_operations(test_class, tests_binary_operators):
             l_object = test_class(**l)
             r_object = test_class(**r)
 
-            real_res = eval(f"l_object.{method}(r_object)")
+            try: 
+                real_res = eval(f"l_object.{method}(r_object)")
+            except AttributeError:
+                passed = False 
+                case_feedback += f"Method {method} is not defined."
             if real_res.__str__() != exp_str:
                 passed = False 
                 passed_case = False 
