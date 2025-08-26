@@ -606,6 +606,41 @@ def test_binary_operations(test_class, tests_binary_operators):
     return feedback[2:], passed
 
 
+def test_class_2(test_class):
+    try:
+        import pickle 
+        with open("test_"+test_class.__name__, "rb") as file:
+            input_args, expected_args, expected_returns, expected_modified_attrs, tests_binary_operators = pickle.load(file)
+    except:
+        return "Invalid class name. Make sure your auto-grader is updated.", False
+    
+    ### Ensure the class is initialized correctly with the right attribute values. 
+    fb, passed = test_attributes(test_class, input_args, expected_args)
+
+    if not passed:
+        return fb, False
+    
+    ### test that the methods that return something (without modifying the class) are correct:
+    fb, passed = test_methods(test_class, input_args, expected_returns)
+
+    if not passed:
+        return fb, False 
+    
+    ### test that the methods that modify attributes work properly: 
+    fb, passed = test_methods_modifiers(test_class, input_args, expected_modified_attrs)
+
+    if not passed:
+        return fb, False
+
+    ### test the binary operators: 
+    fb, passed = test_binary_operations(test_class, tests_binary_operators)
+    
+    if not passed:
+        return fb, False
+
+    return "Awesome! Everything is working as expected", True
+
+
 
 import random 
 
