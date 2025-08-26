@@ -526,7 +526,7 @@ def test_class(test_class):
         with open("ADIA_M1/tests_"+test_class.__name__, "rb") as file: 
             input_args, expected_args, expected_results = pickle.load(file)
     except:
-        return "Invalid function name. Make sure your auto-grader is updated.", False
+        return "Invalid class name. Make sure your auto-grader is updated.", False
 
     ### test that the class can be initialized and contains all the right attribute values after initialization
     fb, passed = test_attributes(test_class, input_args, expected_args)
@@ -541,6 +541,71 @@ def test_class(test_class):
         return feedback, False
     
     return "Congrats! Everything works perfectly.", True
+
+def test_methods_modifiers(test_class, input_args, expected_modified_attrs):
+    feedback = ""
+    passed = True 
+    ### Note: The method shouldn't take any input values. Otherwise this function doesn't work! 
+    for method, exp_args_list in expected_modified_attrs.items():
+        for args, exp_args in zip(input_args, exp_args_list):
+            passed_case = True
+            instance = test_class(**args)
+            arg_text = [str(key)+"="+str(value) for key, value in args.items()]
+            arg_text = ", ".join(arg_text)
+            case_feedback = f"\n\nCalling {test_class.__name__}({arg_text}).{method}() is not working properly."
+            ### run the method: 
+            try:
+                exec(f"instance.{method}()")
+            except: 
+                case_feedback += "\nMethod returned an error and could not be executed. Test it yourself until it works."
+                continue
+            ### check that the resulting attributes are right: 
+            for attr, exp_value in exp_args.items():
+                real_value = getattr(instance, attr)
+                if not compare_returns(real_value, exp_value):
+                    passed_case = False
+                    case_feedback += f"\nAttribute {attr} is set to {real_value} instead of {exp_value}."
+
+            if not passed_case: 
+                passed = False 
+                feedback += case_feedback
+
+    return feedback[2:], passed
+
+
+def test_binary_operations(test_class, tests_binary_operators):
+    """ 
+    test_binary_operators: [(left_initializer_dict, right_initializer_dict, {"method_name":"expected_result__str__"})]
+    """
+    passed = True 
+    feedback = ""
+    for l, r, exp_results in tests_binary_operators: 
+        for method, exp_str in exp_results.items():
+            ### arg text: 
+            arg_text_l = [str(key)+"="+str(value) for key, value in l.items()]
+            arg_text_r = [str(key)+"="+str(value) for key, value in r.items()]
+            arg_text_l = ", ".join(arg_text_l)
+            arg_text_r = ", ".join(arg_text_r)
+            passed_case = True 
+            case_feedback = f"\n\nCalling {test_class.__name__}({arg_text_l}).{method}({test_class.__name__}({arg_text_r})) returned an unexpected value:"
+
+            l_object = test_class(**l)
+            r_object = test_class(**r)
+
+            real_res = eval(f"l_object.{method}(r_object)")
+            if real_res.__str__() != exp_str:
+                passed = False 
+                passed_case = False 
+                case_feedback += f"\nReturned: {real_res}\nExpected: {exp_str}"
+            
+            if not passed_case: 
+                feedback += case_feedback
+            
+
+
+    return feedback[2:], passed
+
+
 
 import random 
 
