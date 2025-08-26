@@ -588,7 +588,7 @@ def test_methods_modifiers(test_class, input_args, expected_modified_attrs):
             try:
                 exec(f"instance.{method}()")
             except: 
-                feedback += f"\n\nMethod {method} returned an error and could not be executed. Test it yourself until it works, then try again with the autograder."
+                feedback += f"\n\nMethod {method} returned an error and could not be executed.\nIt is either not defined, or caused an error.\nTest it yourself until it works, then try again with the autograder.\nSample case: {test_class.__name__}({arg_text}).{method}()"
                 passed = False
                 passed_case = False
                 break 
