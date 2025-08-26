@@ -513,7 +513,7 @@ def test_methods(test_class, input_args, expected_results):
             if type(real_result) == type("Hello"):
                 if "<__main__." in real_result: 
                     passed = False 
-                    shoud_break = True
+                    should_break = True
                     feedback += f"\n\nMethod {method} is not implemented. Returned {real_result} istead of {exp_value}"
                     break 
 
@@ -522,12 +522,13 @@ def test_methods(test_class, input_args, expected_results):
                 passed_case = False 
                 passed = False
                 case_feedback += f"\n{instance.__class__.__name__}.{method}() returned {real_result} instead of {exp_value}"
-        if should_break: 
-            should_break = False 
-            break 
-        
-        if not passed_case: 
-            feedback += case_feedback
+            # if should_break: 
+            #     print("Entered here")
+            #     should_break = False 
+            #     break 
+
+            if not passed_case: 
+                feedback += case_feedback
     return feedback[2:], passed
 
 
