@@ -678,28 +678,40 @@ def test_class_2(test_class):
         return "Invalid class name. Make sure your auto-grader is updated.", False
     
     ### Ensure the class is initialized correctly with the right attribute values. 
+    print("Testing initialization values...")
     fb, passed = test_attributes(test_class, input_args, expected_args)
 
     if not passed:
         return fb, False
+    else:
+        print("Initialization is correct.")
     
     ### test that the methods that return something (without modifying the class) are correct:
+    print("Testing methods that return some value...")
     fb, passed = test_methods(test_class, input_args, expected_returns)
 
     if not passed:
         return fb, False 
+    else:
+        print("All good.")
     
     ### test that the methods that modify attributes work properly: 
+    print("\nTesting methods that modify the object...")
     fb, passed = test_methods_modifiers(test_class, input_args, expected_modified_attrs)
 
     if not passed:
         return fb, False
+    else:
+        print("All good.")
 
     ### test the binary operators: 
+    print("Testing implementation of binary operations...")
     fb, passed = test_binary_operations(test_class, tests_binary_operators)
     
     if not passed:
         return fb, False
+    else:
+        print("All good.")
 
     return "Awesome! Everything is working as expected", True
 
