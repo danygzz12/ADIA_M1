@@ -498,7 +498,6 @@ def test_attributes(test_class, input_args, expected_args):
 def test_methods(test_class, input_args, expected_results):
     feedback = ""
     passed = True
-    should_break = False
     for args, results in zip(input_args, expected_results):
         arg_text = [str(key)+"="+str(value) for key, value in args.items()]
         arg_text = ", ".join(arg_text)
@@ -513,7 +512,6 @@ def test_methods(test_class, input_args, expected_results):
             if type(real_result) == type("Hello"):
                 if "<__main__." in real_result: 
                     passed = False 
-                    should_break = True
                     feedback += f"\n\nMethod {method} is not implemented. Returned {real_result} istead of {exp_value}"
                     break 
 
@@ -522,10 +520,7 @@ def test_methods(test_class, input_args, expected_results):
                 passed_case = False 
                 passed = False
                 case_feedback += f"\n{instance.__class__.__name__}.{method}() returned {real_result} instead of {exp_value}"
-            # if should_break: 
-            #     print("Entered here")
-            #     should_break = False 
-            #     break 
+
 
             if not passed_case: 
                 feedback += case_feedback
@@ -630,6 +625,7 @@ def test_binary_operations(test_class, tests_binary_operators):
     """
     passed = True 
     feedback = ""
+    should_break = False
     for l, r, exp_results in tests_binary_operators: 
         for method, exp_str in exp_results.items():
             ### arg text: 
@@ -649,10 +645,12 @@ def test_binary_operations(test_class, tests_binary_operators):
                 passed = False 
                 # case_feedback += f"Method {method} is not defined."
                 feedback += f"\n\nMethod {method} is not defined. Cannot proceed with testing."
+                should_break = True 
                 continue
 
             if type(real_res) == type(NotImplemented):
                 feedback += f"\n\nMethod {method} is not defined. Cannot proceed with testing."
+                should_break = True 
                 continue
                 
             if real_res.__str__() != exp_str:
@@ -662,6 +660,9 @@ def test_binary_operations(test_class, tests_binary_operators):
             
             if not passed_case: 
                 feedback += case_feedback
+        if should_break:
+            should_break = False 
+            break
             
 
 
