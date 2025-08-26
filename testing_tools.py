@@ -508,6 +508,14 @@ def test_methods(test_class, input_args, expected_results):
         for method, exp_value in results.items():
             real_method = getattr(instance, method)
             real_result = real_method()
+
+            if type(real_result) == type("Hello"):
+                if "<__main__>." in real_result: 
+                    passed_case = False 
+                    passed = False 
+                    feedback += f"\n\nMethod {method} is not implemented. Returned {real_result} istead of {exp_value}"
+                    break 
+
             if not compare_returns(real_result, exp_value):
             # if real_result != exp_value:
                 passed_case = False 
