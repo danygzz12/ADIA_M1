@@ -510,6 +510,7 @@ def test_methods(test_class, input_args, expected_results):
             real_result = real_method()
 
             if type(real_result) == type("Hello"):
+                print("entered here")
                 if "<__main__>." in real_result: 
                     passed_case = False 
                     passed = False 
