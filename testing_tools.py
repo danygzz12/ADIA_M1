@@ -949,8 +949,9 @@ def test_methods_2(test_class):
         exp_result = learner.QTable[state][action] + learner.alpha * (reward + learner.gamma * learner.QTable[next_state][learner.choose_max_action(next_state)] - learner.QTable[state][action])
         learner.update_QTable(state, action, next_state, reward)
         real_result = learner.QTable[state][action]
+        print(exp_result, real_result)
         if compare_returns(real_result, exp_result):
-            feedback += "Your update_QTable function isn't working as expected."
+            feedback += "Your update_QTable function isn't working as expected. Are you sure the Bellman update is computed right?\nAre you sure the learner has attributes for gamma and alpha?"
             passed = False 
 
         if not passed:
@@ -986,7 +987,7 @@ def test_learner_class(test_class, gw_class):
     try: 
         instance = test_class()
     except:
-        return f"Learner could not be initialized. Check that the cells above for testing your learner run correctly."
+        return f"Learner could not be initialized. Check that the cells above for testing your learner run correctly.", False
     
     fb, passed = test_methods_2(test_class)
 
