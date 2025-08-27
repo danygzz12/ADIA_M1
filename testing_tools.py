@@ -6,6 +6,7 @@ def compare_returns(expected_output, real_output):
     if isinstance(expected_output, complex) or isinstance(real_output, complex):
         return abs(expected_output - real_output) <= 1e-6
     if isinstance(expected_output, float) or isinstance(real_output, float):
+        print("entered here")
         ### compare numbers with a tolerance level
         from math import isclose
         return isclose(expected_output, real_output, rel_tol=1e-6, abs_tol=1e-6)
