@@ -968,15 +968,18 @@ def test_learner(test_class, gw_class):
         ### Copy the grid world to test it later: 
         gw_testing = gw.copy()
 
-        for i in range(50):
+        for i in range(100):
             total_reward = 0
             while not gw_testing.end:
                 action = learner.choose_max_action(gw_testing.state)
                 next_state, reward = gw_testing.move(action)
                 total_reward += reward 
 
+                gw_testing.episodes = 0
+
             if total_reward < 15: 
                 return f"Your learner isn't performing well. It got a total reward of {total_reward}.\nThis is etiher extremely rare or due to incorrect implementation.\nRun this again to see if it was an anomaly, but if it happens again, it's not likely an anomaly", False
+            
     return "Congrats! Your learner can actually learn how to navigate the grid world!", True
     
 
