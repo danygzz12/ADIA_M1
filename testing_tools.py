@@ -916,3 +916,88 @@ def test_rswitch_behavior(test_class, num_tests=100):
     else: 
         return "Your random switching strategy is off. It should switch if random.random() < self.p_switch\n" + feedback, False
 
+def test_methods_2(test_class):
+    ### test the choose_max_action method: 
+    from random import choice, random
+    learner = test_class()
+    passed = True
+    feedback = ""
+    
+    for i in range(15):
+        n = choice([3, 4, 5])
+        state = (choice(range(n)), choice(range(n)))
+        learner.QTable[state] = [random() for i in range(n)]
+        exp_result = learner.QTable[state].index(max(learner.QTable[state]))
+        real_result = learner.choose_max_action(state)
+        if exp_result != real_result:
+            feedback += "Your choose_max_action method isn't working properly."
+            passed = False
+    if not passed:
+        return feedback, False
+
+    ### test the update Q-function method
+    for i in range(15):
+        n = choice([3, 4, 5])
+        state = (choice(range(n)), choice(range(n)))
+        next_state = (choice(range(n)), choice(range(n)))
+        reward = choice([-1, -1, -1, -5, -10, 20])
+        qs1 = [random() for i in range(n)]
+        qs2 = [random() for i in range(n)]
+        learner.QTable[state] = qs1.copy()
+        learner.QTable[next_state] = qs2.copy()
+        action = choice([0, 1, 2, 3])
+        exp_result = learner.QTable[state][action] + learner.alpha * (reward + learner.gamma * leaner.QTable[next_state][leaner.choose_max_action(next_state)] - leaner.QTable[state][action])
+        learner.update_QTable(state, action, next_state, reward)
+        real_result = learner.QTable[state][action]
+        if compare_returns(real_result, exp_result):
+            feedback += "Your update_QTable function isn't working as expected."
+            passed = False 
+
+        if not passed:
+            return feedback, False
+
+    return "Everything seems to be working correctly! We'll just check your Q-Table and your learner's performance.", True
+
+
+
+def test_learner(test_class, gw_class):
+    learner = test_class()
+
+    for n in range(3, 6):
+        gw = gw_class(n)
+        ### Copy the grid world to test it later: 
+        gw_testing = gw.copy()
+
+        for i in range(100):
+            total_reward = 0
+            while not gw_testing.end:
+                action = learner.choose_max_action(gw_testing.state)
+                next_state, reward = gw_testing.move(action)
+                total_reward += reward 
+
+            if total_reward < 15: 
+                return f"Your learner isn't performing well. It got a total reward of {total_reward}.\nThis is etiher extremely rare or due to incorrect implementation.\nRun this again to see if it was an anomaly, but if it happens again, it's not likely an anomaly", False
+    return "Congrats! Your learner can actually learn how to navigate the grid world!", True
+    
+
+
+def test_learner_class(test_class, gw_class):
+    ### test initialization: 
+    try: 
+        instance = test_class()
+    except:
+        return f"Learner could not be initialized. Check that the cells above for testing your learner run correctly."
+    
+    fb, passed = test_methods_2(test_class)
+
+    if not passed:
+        return fb, passed
+    print(fb)
+
+    fb, passed = test_learner(test_class, gw_class)
+
+    if not passed:
+        return fb, passed 
+    print(fb)
+
+    return "Contgrats! Everything is working in order. Good job!", True
