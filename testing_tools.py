@@ -961,12 +961,14 @@ def test_methods_2(test_class):
 
 
 def test_learner(test_class, gw_class):
-    learner = test_class()
 
     for n in range(3, 6):
         gw = gw_class(n)
         ### Copy the grid world to test it later: 
         gw_testing = gw.copy()
+
+        learner = test_class()
+        learner.train(gw)
 
         for i in range(100):
             total_reward = 0
@@ -974,8 +976,7 @@ def test_learner(test_class, gw_class):
                 action = learner.choose_max_action(gw_testing.state)
                 next_state, reward = gw_testing.move(action)
                 total_reward += reward 
-
-                gw_testing.episodes = 0
+            gw_testing.move(0)
 
             if total_reward < 15: 
                 return f"Your learner isn't performing well. It got a total reward of {total_reward}.\nThis is etiher extremely rare or due to incorrect implementation.\nRun this again to see if it was an anomaly, but if it happens again, it's not likely an anomaly", False
