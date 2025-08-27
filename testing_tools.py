@@ -6,7 +6,6 @@ def compare_returns(expected_output, real_output):
     if isinstance(expected_output, complex) or isinstance(real_output, complex):
         return abs(expected_output - real_output) <= 1e-6
     if isinstance(expected_output, float) or isinstance(real_output, float):
-        print("entered here")
         ### compare numbers with a tolerance level
         from math import isclose
         return isclose(expected_output, real_output, rel_tol=1e-6, abs_tol=1e-6)
@@ -951,7 +950,7 @@ def test_methods_2(test_class):
         learner.update_QTable(state, action, next_state, reward)
         real_result = learner.QTable[state][action]
         print(exp_result, real_result)
-        if compare_returns(real_result, exp_result):
+        if not compare_returns(real_result, exp_result):
             feedback += "Your update_QTable function isn't working as expected. Are you sure the Bellman update is computed right?\nAre you sure the learner has attributes for gamma and alpha?"
             passed = False 
 
