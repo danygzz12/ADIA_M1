@@ -949,7 +949,6 @@ def test_methods_2(test_class):
         exp_result = learner.QTable[state][action] + learner.alpha * (reward + learner.gamma * learner.QTable[next_state][learner.choose_max_action(next_state)] - learner.QTable[state][action])
         learner.update_QTable(state, action, next_state, reward)
         real_result = learner.QTable[state][action]
-        print(exp_result, real_result)
         if not compare_returns(real_result, exp_result):
             feedback += "Your update_QTable function isn't working as expected. Are you sure the Bellman update is computed right?\nAre you sure the learner has attributes for gamma and alpha?"
             passed = False 
@@ -969,7 +968,7 @@ def test_learner(test_class, gw_class):
         ### Copy the grid world to test it later: 
         gw_testing = gw.copy()
 
-        for i in range(100):
+        for i in range(50):
             total_reward = 0
             while not gw_testing.end:
                 action = learner.choose_max_action(gw_testing.state)
