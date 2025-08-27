@@ -946,7 +946,7 @@ def test_methods_2(test_class):
         learner.QTable[state] = qs1.copy()
         learner.QTable[next_state] = qs2.copy()
         action = choice([0, 1, 2, 3])
-        exp_result = learner.QTable[state][action] + learner.alpha * (reward + learner.gamma * leaner.QTable[next_state][leaner.choose_max_action(next_state)] - leaner.QTable[state][action])
+        exp_result = learner.QTable[state][action] + learner.alpha * (reward + learner.gamma * learner.QTable[next_state][learner.choose_max_action(next_state)] - learner.QTable[state][action])
         learner.update_QTable(state, action, next_state, reward)
         real_result = learner.QTable[state][action]
         if compare_returns(real_result, exp_result):
